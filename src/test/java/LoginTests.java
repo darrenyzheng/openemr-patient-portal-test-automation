@@ -5,138 +5,185 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import pages.LoginPage;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class LoginTests {
 
     private WebDriver driver;
+    private LoginPage loginPage;
     private static final String BASE_URL = System.getenv("BASE_URL");
     private static final String USERNAME = System.getenv("USERNAME");
     private static final String PASSWORD = System.getenv("PASSWORD");
-    private static final String EMAIL =  System.getenv("EMAIL");
+    private static final String EMAIL = System.getenv("EMAIL");
 
     @BeforeEach
     void setUp() {
-        driver = new ChromeDriver();
+        driver = new FirefoxDriver();
+        driver.get(BASE_URL);
+        loginPage = new LoginPage(driver);
     }
 
     @Test
     public void testValidLogin() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         loginPage.login(USERNAME, PASSWORD, EMAIL);
     }
 
     @Test
     public void testEmptyLogin() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         loginPage.login("", "", "");
-        WebElement activeElement = (WebElement) ((JavascriptExecutor) driver) .executeScript("return document.activeElement");
+
+        WebElement activeElement = (WebElement) ((JavascriptExecutor) driver)
+                .executeScript("return document.activeElement");
+
         assertEquals(driver.findElement(LoginPage.USERNAME), activeElement);
-        assert !driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed();
+        assertFalse(driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed());
     }
 
     @Test
     public void testWrongFormatEmail() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(USERNAME, PASSWORD, "invalid-email");
-        WebElement activeElement = (WebElement) ((JavascriptExecutor) driver) .executeScript("return document.activeElement");
+        String invalidEmail = "invalid-email";
+        loginPage.login(USERNAME, PASSWORD, invalidEmail);
+
+        WebElement activeElement = (WebElement) ((JavascriptExecutor) driver)
+                .executeScript("return document.activeElement");
+
         assertEquals(driver.findElement(LoginPage.EMAIL), activeElement);
-        assert !driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed();
+        assertFalse(driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed());
     }
 
     @Test
     public void testEmptyUsername() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         loginPage.login("", PASSWORD, EMAIL);
-        WebElement activeElement = (WebElement) ((JavascriptExecutor) driver) .executeScript("return document.activeElement");
+
+        WebElement activeElement = (WebElement) ((JavascriptExecutor) driver)
+                .executeScript("return document.activeElement");
+
         assertEquals(driver.findElement(LoginPage.USERNAME), activeElement);
-        assert !driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed();
+        assertFalse(driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed());
     }
 
     @Test
     public void testInvalidUsername() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.login("Darren3", PASSWORD, EMAIL);
+        String invalidUsername = "invalid-username";
+        loginPage.login(invalidUsername, PASSWORD, EMAIL);
+
+        assertTrue(driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed());
     }
 
     @Test
     public void testEmptyPassword() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         loginPage.login(USERNAME, "", EMAIL);
+
+        WebElement activeElement = (WebElement) ((JavascriptExecutor) driver)
+                .executeScript("return document.activeElement");
+
+        assertEquals(driver.findElement(LoginPage.PASSWORD), activeElement);
+        assertFalse(driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed());
     }
 
     @Test
     public void testInvalidPassword() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(USERNAME, "invalid-password", EMAIL);
+        String invalidPassword = "invalid-password";
+        loginPage.login(USERNAME, invalidPassword, EMAIL);
+
+        assertTrue(driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed());
     }
 
-    // to do
     @Test
     public void testPasswordVisibilityToggle() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         loginPage.fillLoginForm(USERNAME, "test123", EMAIL);
+
+        WebElement password = driver.findElement(LoginPage.PASSWORD);
+
+        assertEquals("password", password.getDomProperty("type"));
+        assertEquals("test123", password.getDomProperty("value"));
+
         driver.findElement(LoginPage.PASSWORD_VISIBILITY_BUTTON).click();
+
+        assertEquals("text", password.getDomProperty("type"));
+        assertEquals("test123", password.getDomProperty("value"));
+
+        driver.findElement(LoginPage.PASSWORD_VISIBILITY_BUTTON).click();
+
+        assertEquals("password", password.getDomProperty("type"));
+        assertEquals("test123", password.getDomProperty("value"));
     }
 
     @Test
     public void testEmptyEmail() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         loginPage.login(USERNAME, PASSWORD, "");
-        assert loginPage.getText(LoginPage.ERROR_MESSAGE).contains("Something went wrong. Please try again.");
+
+        assertTrue(
+                loginPage.getText(LoginPage.ERROR_MESSAGE)
+                        .contains("Something went wrong. Please try again.")
+        );
     }
 
     @Test
     public void testNoDomainEmail() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         String emailWithoutDomain = "test@";
+
         loginPage.login(USERNAME, PASSWORD, emailWithoutDomain);
-        String validationMessage = driver.findElement(LoginPage.EMAIL).getAttribute("validationMessage");
-        assert ("Please enter a part following '@'. '" + emailWithoutDomain + "' is incomplete.")
-                .equals(validationMessage);
+
+        String validationMessage =
+                driver.findElement(LoginPage.EMAIL)
+                        .getDomProperty("validationMessage");
+
+        assertEquals(
+                "Please enter a part following '@'. '" + emailWithoutDomain + "' is incomplete.",
+                validationMessage
+        );
     }
 
     @Test
     public void testNoLocalPartEmail() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         String emailWithoutLocalPart = "@test.com";
-        loginPage.login(USERNAME, PASSWORD, emailWithoutLocalPart);
-        String validationMessage = driver.findElement(LoginPage.EMAIL).getAttribute("validationMessage");
-        assert ("Please enter a part followed by '@'. '" + emailWithoutLocalPart + "' is incomplete.")
-                .equals(validationMessage);
 
+        loginPage.login(USERNAME, PASSWORD, emailWithoutLocalPart);
+
+        String validationMessage =
+                driver.findElement(LoginPage.EMAIL)
+                        .getDomProperty("validationMessage");
+
+        assertEquals(
+                "Please enter a part followed by '@'. '" + emailWithoutLocalPart + "' is incomplete.",
+                validationMessage
+        );
     }
 
     @Test
     public void testNoDomainSuffixEmail() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         String emailWithoutDomainSuffix = "test@test";
+
         loginPage.login(USERNAME, PASSWORD, emailWithoutDomainSuffix);
-        assert loginPage.getText(LoginPage.ERROR_MESSAGE).contains("Something went wrong. Please try again.");
+
+        assertTrue(
+                loginPage.getText(LoginPage.ERROR_MESSAGE)
+                        .contains("Something went wrong. Please try again.")
+        );
     }
 
     @Test
     public void testFieldsAfterRefresh() {
-        driver.get(BASE_URL);
-        LoginPage loginPage = new LoginPage(driver);
         loginPage.fillLoginForm(USERNAME, PASSWORD, EMAIL);
+
         driver.navigate().refresh();
 
+        String username =
+                driver.findElement(LoginPage.USERNAME).getDomProperty("value");
+        assertTrue(username == null || username.isEmpty());
+
+        String password =
+                driver.findElement(LoginPage.PASSWORD).getDomProperty("value");
+        assertTrue(password == null || password.isEmpty());
+
+        String email =
+                driver.findElement(LoginPage.EMAIL).getDomProperty("value");
+        assertTrue(email == null || email.isEmpty());
     }
 
     @AfterEach
