@@ -1,0 +1,167 @@
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import pages.BillingSummaryPage;
+import pages.DashboardPage;
+import pages.LoginPage;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+public class BillingSummaryTests {
+
+    private WebDriver driver;
+    private BillingSummaryPage billingSummaryPage;
+
+    private static final String BASE_URL = System.getenv("BASE_URL");
+    private static final String USERNAME = System.getenv("USERNAME");
+    private static final String PASSWORD = System.getenv("PASSWORD");
+    private static final String EMAIL = System.getenv("EMAIL");
+
+    @BeforeEach
+    public void setUp() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--guest");
+        options.setAcceptInsecureCerts(true);
+
+        driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
+
+        LoginPage loginPage = new LoginPage(driver);
+        DashboardPage dashboardPage = new DashboardPage(driver);
+        billingSummaryPage = new BillingSummaryPage(driver);
+
+        loginPage.open(BASE_URL);
+        loginPage.login(USERNAME, PASSWORD, EMAIL);
+        dashboardPage.clickLedgerButton();
+    }
+
+    @Test
+    public void selectTodayUsingDatePickers() {
+        billingSummaryPage.openFromDatePicker();
+        billingSummaryPage.selectToday(0);
+
+        billingSummaryPage.openToDatePicker();
+        billingSummaryPage.selectToday(1);
+
+        billingSummaryPage.submitBillingSummary();
+
+        assertEquals(
+                billingSummaryPage.getToday(),
+                billingSummaryPage.getFromDate()
+        );
+
+        assertEquals(
+                billingSummaryPage.getToday(),
+                billingSummaryPage.getToDate()
+        );
+    }
+
+    @Test
+    public void enterTodayUsingKeyboard() {
+        billingSummaryPage.enterTodayAsFromDate();
+        billingSummaryPage.enterTodayAsToDate();
+
+        billingSummaryPage.submitBillingSummary();
+
+        assertEquals(
+                billingSummaryPage.getToday(),
+                billingSummaryPage.getFromDate()
+        );
+
+        assertEquals(
+                billingSummaryPage.getToday(),
+                billingSummaryPage.getToDate()
+        );
+    }
+
+    @Test
+    public void selectFromDateUsingPickerAndEnterToDateUsingKeyboard() {
+        billingSummaryPage.openFromDatePicker();
+        billingSummaryPage.selectToday(0);
+
+        billingSummaryPage.enterTodayAsToDate();
+
+        billingSummaryPage.submitBillingSummary();
+
+        assertEquals(
+                billingSummaryPage.getToday(),
+                billingSummaryPage.getFromDate()
+        );
+
+        assertEquals(
+                billingSummaryPage.getToday(),
+                billingSummaryPage.getToDate()
+        );
+    }
+
+    @Test
+    public void enterFromDateAfterToDate() {
+        billingSummaryPage.enterFromDate("2026-02-01");
+        billingSummaryPage.enterToDate("2026-01-01");
+
+        billingSummaryPage.submitBillingSummary();
+    }
+
+    @Test
+    public void enterInvalidDateFormat() {
+        billingSummaryPage.enterFromDate("06-02-1995");
+        billingSummaryPage.enterToDate("06-30-2000");
+
+        billingSummaryPage.submitBillingSummary();
+    }
+
+    @Test
+    public void enterFutureDates() {
+        billingSummaryPage.enterFromDate("3030-02-01");
+        billingSummaryPage.enterToDate("3032-02-01");
+
+        billingSummaryPage.submitBillingSummary();
+    }
+
+    @Test
+    public void enterPastDates() {
+        billingSummaryPage.enterFromDate("0950-01-01");
+        billingSummaryPage.enterToDate("0975-01-01");
+
+        billingSummaryPage.submitBillingSummary();
+    }
+
+    @Test
+    public void navigateToPreviousMonth() {
+        billingSummaryPage.openFromDatePicker();
+        billingSummaryPage.selectPreviousMonth(0);
+    }
+
+    @Test
+    public void navigateToNextMonth() {
+        billingSummaryPage.openFromDatePicker();
+        billingSummaryPage.selectNextMonth(0);
+    }
+
+    @Test
+    public void dateFieldsResetAfterRefresh() {
+        billingSummaryPage.enterFromDate("2026-01-01");
+        billingSummaryPage.enterToDate("2026-01-01");
+
+        driver.navigate().refresh();
+
+        assertNotEquals(
+                "2026-01-01",
+                billingSummaryPage.getFromDate()
+        );
+
+        assertNotEquals(
+                "2026-01-01",
+                billingSummaryPage.getToDate()
+        );
+    }
+
+    @AfterEach
+    public void tearDown() {
+        driver.quit();
+    }
+}
