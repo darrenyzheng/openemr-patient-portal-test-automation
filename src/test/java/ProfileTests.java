@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.DashboardPage;
 import pages.LoginPage;
@@ -24,6 +25,8 @@ public class ProfileTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc24")
+    @Tag("regression")
     void testCancelClosesProfileModal() {
         profilePage.clickEditProfileButton();
 
@@ -35,6 +38,8 @@ public class ProfileTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc25")
+    @Tag("regression")
     void testCloseButtonClosesProfileModal() {
         profilePage.clickEditProfileButton();
 
@@ -46,6 +51,8 @@ public class ProfileTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc26")
+    @Tag("regression")
     void testRefreshClosesProfileModal() {
         profilePage.clickEditProfileButton();
 

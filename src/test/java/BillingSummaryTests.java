@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.BillingSummaryPage;
 import pages.DashboardPage;
@@ -22,6 +23,8 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc39")
+    @Tag("smoke")
     public void selectTodayUsingDatePickers() {
         billingSummaryPage.openFromDatePicker();
         billingSummaryPage.selectToday(0);
@@ -43,6 +46,8 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc40")
+    @Tag("smoke")
     public void enterTodayUsingKeyboard() {
         billingSummaryPage.enterTodayAsFromDate();
         billingSummaryPage.enterTodayAsToDate();
@@ -61,6 +66,8 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc41")
+    @Tag("regression")
     public void selectFromDateUsingPickerAndEnterToDateUsingKeyboard() {
         billingSummaryPage.openFromDatePicker();
         billingSummaryPage.selectToday(0);
@@ -81,6 +88,8 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc42")
+    @Tag("regression")
     public void enterFromDateAfterToDate() {
         billingSummaryPage.enterFromDate("2026-02-01");
         billingSummaryPage.enterToDate("2026-01-01");
@@ -89,6 +98,8 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc43")
+    @Tag("regression")
     public void enterInvalidDateFormat() {
         billingSummaryPage.enterFromDate("06-02-1995");
         billingSummaryPage.enterToDate("06-30-2000");
@@ -97,6 +108,8 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc44")
+    @Tag("regression")
     public void enterFutureDates() {
         billingSummaryPage.enterFromDate("3030-02-01");
         billingSummaryPage.enterToDate("3032-02-01");
@@ -105,6 +118,8 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc45")
+    @Tag("regression")
     public void enterPastDates() {
         billingSummaryPage.enterFromDate("0950-01-01");
         billingSummaryPage.enterToDate("0975-01-01");
@@ -113,18 +128,24 @@ public class BillingSummaryTests extends BaseTest {
     }
 
     @Test
+    @Tag("tc46")
+    @Tag("regression")
     public void navigateToPreviousMonth() {
         billingSummaryPage.openFromDatePicker();
         billingSummaryPage.selectPreviousMonth(0);
     }
 
     @Test
+    @Tag("tc47")
+    @Tag("regression")
     public void navigateToNextMonth() {
         billingSummaryPage.openFromDatePicker();
         billingSummaryPage.selectNextMonth(0);
     }
 
     @Test
+    @Tag("tc48")
+    @Tag("regression")
     public void dateFieldsResetAfterRefresh() {
         billingSummaryPage.enterFromDate("2026-01-01");
         billingSummaryPage.enterToDate("2026-01-01");

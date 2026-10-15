@@ -23,7 +23,7 @@ public class DocumentsTests extends BaseTest {
 
     @Test
     @Tag("smoke")
-    @Tag("tc47")
+    @Tag("tc49")
     public void verifyDocumentsPageRefreshButton() {
         assertTrue(documentsPage.isDocumentsHeaderVisible());
 
@@ -34,7 +34,7 @@ public class DocumentsTests extends BaseTest {
 
     @Test
     @Tag("regression")
-    @Tag("tc48")
+    @Tag("tc50")
     public void verifyDocumentsPageBrowserRefresh() {
         assertTrue(documentsPage.isDocumentsHeaderVisible());
 

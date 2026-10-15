@@ -23,7 +23,7 @@ public class HelpTests extends BaseTest {
 
     @Test
     @Tag("smoke")
-    @Tag("tc45")
+    @Tag("tc51")
     public void verifyHelpItems() {
         assertEquals(
                 HelpPage.EXPECTED_HELP_ITEMS,
@@ -33,7 +33,7 @@ public class HelpTests extends BaseTest {
 
     @Test
     @Tag("regression")
-    @Tag("tc46")
+    @Tag("tc52")
     public void verifyHelpItemsAfterRefresh() {
         helpPage.refresh();
 

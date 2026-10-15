@@ -25,7 +25,7 @@ public class ListsTests extends BaseTest {
 
     @Test
     @Tag("regression")
-    @Tag("tc39")
+    @Tag("tc53")
     public void verifyImmunizationRecordIsEmpty() {
         assertEquals(
                 "No records found.",
@@ -35,7 +35,7 @@ public class ListsTests extends BaseTest {
 
     @Test
     @Tag("smoke")
-    @Tag("tc40")
+    @Tag("tc54")
     public void verifyMedicationListContainsExpectedMedications() {
         String medications = listsPage.getMedicationsListText();
 
@@ -45,7 +45,7 @@ public class ListsTests extends BaseTest {
 
     @Test
     @Tag("regression")
-    @Tag("tc41")
+    @Tag("tc55")
     public void verifyPrescriptionListIsEmpty() {
         assertEquals(
                 "No Results",
@@ -55,7 +55,7 @@ public class ListsTests extends BaseTest {
 
     @Test
     @Tag("smoke")
-    @Tag("tc42")
+    @Tag("tc56")
     public void verifyAllergyListContainsPenicillin() {
         assertTrue(
                 listsPage.getAllergyListText().contains("penicillin")
@@ -64,7 +64,7 @@ public class ListsTests extends BaseTest {
 
     @Test
     @Tag("regression")
-    @Tag("tc43")
+    @Tag("tc57")
     public void verifyProblemListContainsExpectedConditions() {
         String problemList = listsPage.getProblemListText();
 
@@ -74,7 +74,7 @@ public class ListsTests extends BaseTest {
 
     @Test
     @Tag("regression")
-    @Tag("tc44")
+    @Tag("tc58")
     public void verifyLabResultsAreEmpty() {
         assertEquals(
                 "No Results",
