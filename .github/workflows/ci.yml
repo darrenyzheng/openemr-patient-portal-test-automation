@@ -28,9 +28,9 @@ jobs:
         run: mvn --batch-mode clean test -Dheadless=true
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
-          USERNAME: ${{ secrets.PORTAL_USERNAME }}
-          PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
-          EMAIL: ${{ secrets.PORTAL_EMAIL }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          EMAIL: ${{ secrets.EMAIL }}
 
       - name: Generate Allure report
         if: always()
