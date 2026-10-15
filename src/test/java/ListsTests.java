@@ -1,9 +1,6 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.junit.jupiter.api.Tag;
 import pages.DashboardPage;
 import pages.ListsPage;
 import pages.LoginPage;
@@ -13,28 +10,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListsTests extends BaseTest {
 
-    private WebDriver driver;
     private ListsPage listsPage;
 
     @BeforeEach
-    public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--guest");
-        options.setAcceptInsecureCerts(true);
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
-
+    public void setUpListsPage() {
         LoginPage loginPage = new LoginPage(driver);
+
         DashboardPage dashboardPage = new DashboardPage(driver);
         listsPage = new ListsPage(driver);
-
         loginPage.open(BASE_URL);
         loginPage.login(USERNAME, PASSWORD, EMAIL);
         dashboardPage.clickListsButton();
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc39")
     public void verifyImmunizationRecordIsEmpty() {
         assertEquals(
                 "No records found.",
@@ -43,6 +34,8 @@ public class ListsTests extends BaseTest {
     }
 
     @Test
+    @Tag("smoke")
+    @Tag("tc40")
     public void verifyMedicationListContainsExpectedMedications() {
         String medications = listsPage.getMedicationsListText();
 
@@ -51,6 +44,8 @@ public class ListsTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc41")
     public void verifyPrescriptionListIsEmpty() {
         assertEquals(
                 "No Results",
@@ -59,6 +54,8 @@ public class ListsTests extends BaseTest {
     }
 
     @Test
+    @Tag("smoke")
+    @Tag("tc42")
     public void verifyAllergyListContainsPenicillin() {
         assertTrue(
                 listsPage.getAllergyListText().contains("penicillin")
@@ -66,6 +63,8 @@ public class ListsTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc43")
     public void verifyProblemListContainsExpectedConditions() {
         String problemList = listsPage.getProblemListText();
 
@@ -74,15 +73,12 @@ public class ListsTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc44")
     public void verifyLabResultsAreEmpty() {
         assertEquals(
                 "No Results",
                 listsPage.getLabResultsText().trim()
         );
-    }
-
-    @AfterEach
-    public void tearDown() {
-        driver.quit();
     }
 }

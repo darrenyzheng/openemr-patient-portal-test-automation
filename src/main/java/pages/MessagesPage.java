@@ -136,6 +136,13 @@ public class MessagesPage extends BasePage {
         );
     }
 
+    public void waitForSentAndAllCounts(int expectedSent, int expectedAll) {
+        wait.until(driver ->
+                getSentMessageCount() == expectedSent
+                        && getAllMessageCount() == expectedAll
+        );
+    }
+
     public void writeTestMessage() {
         WebElement textBox = wait.until(
                 ExpectedConditions.elementToBeClickable(MESSAGE_TEXTBOX)
@@ -168,21 +175,21 @@ public class MessagesPage extends BasePage {
     }
 
     private Integer getMessageCount(By locator) {
-        for (int attempt = 1; attempt <= 3; attempt++) {
+        return wait.until(driver -> {
             try {
-                return Integer.parseInt(
-                        driver.findElement(locator)
-                                .getText()
-                                .trim()
-                );
-            } catch (StaleElementReferenceException e) {
-                if (attempt == 3) {
-                    return null;
-                }
-            }
-        }
+                String text = driver.findElement(locator)
+                        .getText()
+                        .trim();
 
-        return null;
+                if (text.matches("\\d+")) {
+                    return Integer.parseInt(text);
+                }
+
+                return null;
+            } catch (StaleElementReferenceException e) {
+                return null;
+            }
+        });
     }
 
     private void retryClick(By locator) {

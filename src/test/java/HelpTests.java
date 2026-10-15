@@ -1,9 +1,6 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.junit.jupiter.api.Tag;
 import pages.DashboardPage;
 import pages.HelpPage;
 import pages.LoginPage;
@@ -12,28 +9,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelpTests extends BaseTest {
 
-    private WebDriver driver;
     private HelpPage helpPage;
 
     @BeforeEach
-    public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--guest");
-        options.setAcceptInsecureCerts(true);
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
-
+    public void setUpHelpPage() {
         LoginPage loginPage = new LoginPage(driver);
         DashboardPage dashboardPage = new DashboardPage(driver);
         helpPage = new HelpPage(driver);
-
         loginPage.open(BASE_URL);
         loginPage.login(USERNAME, PASSWORD, EMAIL);
         dashboardPage.clickHelpButton();
     }
 
     @Test
+    @Tag("smoke")
+    @Tag("tc45")
     public void verifyHelpItems() {
         assertEquals(
                 HelpPage.EXPECTED_HELP_ITEMS,
@@ -42,6 +32,8 @@ public class HelpTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc46")
     public void verifyHelpItemsAfterRefresh() {
         helpPage.refresh();
 
@@ -49,10 +41,5 @@ public class HelpTests extends BaseTest {
                 HelpPage.EXPECTED_HELP_ITEMS,
                 helpPage.getHelpItems()
         );
-    }
-
-    @AfterEach
-    public void tearDown() {
-        driver.quit();
     }
 }

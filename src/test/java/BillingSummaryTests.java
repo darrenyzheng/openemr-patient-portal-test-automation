@@ -1,9 +1,5 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import pages.BillingSummaryPage;
 import pages.DashboardPage;
 import pages.LoginPage;
@@ -11,29 +7,15 @@ import pages.LoginPage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class BillingSummaryTests {
+public class BillingSummaryTests extends BaseTest {
 
-    private WebDriver driver;
     private BillingSummaryPage billingSummaryPage;
 
-    private static final String BASE_URL = System.getenv("BASE_URL");
-    private static final String USERNAME = System.getenv("USERNAME");
-    private static final String PASSWORD = System.getenv("PASSWORD");
-    private static final String EMAIL = System.getenv("EMAIL");
-
     @BeforeEach
-    public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--guest");
-        options.setAcceptInsecureCerts(true);
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
-
-        LoginPage loginPage = new LoginPage(driver);
+    void setUpBillingSummaryPage() {
         DashboardPage dashboardPage = new DashboardPage(driver);
         billingSummaryPage = new BillingSummaryPage(driver);
-
+        LoginPage loginPage = new LoginPage(driver);
         loginPage.open(BASE_URL);
         loginPage.login(USERNAME, PASSWORD, EMAIL);
         dashboardPage.clickLedgerButton();
@@ -158,10 +140,5 @@ public class BillingSummaryTests {
                 "2026-01-01",
                 billingSummaryPage.getToDate()
         );
-    }
-
-    @AfterEach
-    public void tearDown() {
-        driver.quit();
     }
 }

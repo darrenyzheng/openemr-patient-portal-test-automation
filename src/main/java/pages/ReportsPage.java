@@ -62,22 +62,7 @@ public class ReportsPage extends BasePage {
         click(DOWNLOAD_SUMMARY_OF_CARE);
     }
 
-    public void createReport() {
-        for (int attempt = 1; attempt <= 3; attempt++) {
-            try {
-                click(CREATE_REPORT);
-                return;
 
-            } catch (TimeoutException
-                     | ElementClickInterceptedException
-                     | StaleElementReferenceException e) {
-
-                if (attempt == 3) {
-                    throw e;
-                }
-            }
-        }
-    }
 
     public void downloadDocuments() {
         click(DOWNLOAD_DOCUMENTS);

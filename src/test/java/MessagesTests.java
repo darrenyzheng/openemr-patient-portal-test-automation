@@ -1,9 +1,6 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.junit.jupiter.api.Tag;
 import pages.DashboardPage;
 import pages.LoginPage;
 import pages.MessagesPage;
@@ -13,29 +10,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MessagesTests extends BaseTest {
 
-    private WebDriver driver;
     private MessagesPage messagesPage;
 
     @BeforeEach
-    void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--guest");
-        options.setAcceptInsecureCerts(true);
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
-
+    void setUpMessagesPage() {
         LoginPage loginPage = new LoginPage(driver);
         DashboardPage dashboardPage = new DashboardPage(driver);
-
+        messagesPage = new MessagesPage(driver);
         loginPage.open(BASE_URL);
         loginPage.login(USERNAME, PASSWORD, EMAIL);
-
         dashboardPage.clickMessagesButton();
-        messagesPage = new MessagesPage(driver);
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc15")
     void testCancelClosesComposeMessage() {
         messagesPage.switchToMessagingFrame();
         messagesPage.clickComposeMessageButton();
@@ -45,6 +34,8 @@ public class MessagesTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc16")
     void testCloseButtonClosesComposeMessage() {
         messagesPage.switchToMessagingFrame();
         messagesPage.clickComposeMessageButton();
@@ -54,6 +45,8 @@ public class MessagesTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc17")
     void testSendingEmptyMessageUpdatesCounts() {
         messagesPage.switchToMessagingFrame();
 
@@ -62,6 +55,11 @@ public class MessagesTests extends BaseTest {
 
         messagesPage.clickComposeMessageButton();
         messagesPage.clickSendButton();
+
+        messagesPage.waitForSentAndAllCounts(
+                beforeSent + 1,
+                beforeAll + 1
+        );
 
         assertEquals(
                 beforeSent + 1,
@@ -75,6 +73,8 @@ public class MessagesTests extends BaseTest {
     }
 
     @Test
+    @Tag("smoke")
+    @Tag("tc18")
     void testSendingMessageUpdatesCounts() {
         messagesPage.switchToMessagingFrame();
 
@@ -85,6 +85,11 @@ public class MessagesTests extends BaseTest {
         messagesPage.writeTestMessage();
         messagesPage.clickSendButton();
 
+
+        messagesPage.waitForSentAndAllCounts(
+                beforeSent + 1,
+                beforeAll + 1
+        );
         assertEquals(
                 beforeSent + 1,
                 messagesPage.getSentMessageCount()
@@ -97,6 +102,8 @@ public class MessagesTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc19")
     void testSendingMessageToArchive() {
         messagesPage.switchToMessagingFrame();
 
@@ -131,10 +138,5 @@ public class MessagesTests extends BaseTest {
                 beforeArchive + 1,
                 messagesPage.getArchiveMessageCount()
         );
-    }
-
-    @AfterEach
-    void tearDown() {
-        driver.quit();
     }
 }

@@ -1,0 +1,45 @@
+
+name: OpenEMR Patient Portal Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Run Selenium tests
+        run: mvn --batch-mode clean test -Dheadless=true
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          USERNAME: ${{ secrets.PORTAL_USERNAME }}
+          PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
+          EMAIL: ${{ secrets.PORTAL_EMAIL }}
+
+      - name: Generate Allure report
+        if: always()
+        run: mvn --batch-mode allure:report
+
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-report
+          path: target/site/allure-maven-plugin/
+          if-no-files-found: warn

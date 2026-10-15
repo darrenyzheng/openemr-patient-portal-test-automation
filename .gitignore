@@ -26,5 +26,13 @@ bin/
 ### VS Code ###
 .vscode/
 
+### Maven build output ###
+target/
+
+### Allure generated results and downloaded runtime
+allure-results/
+allure-report/
+.allure/
+
 ### Mac OS ###
 .DS_Store

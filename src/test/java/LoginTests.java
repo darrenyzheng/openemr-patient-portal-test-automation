@@ -1,11 +1,8 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import pages.DashboardPage;
 import pages.LoginPage;
 
@@ -15,26 +12,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginTests extends BaseTest {
 
-    private WebDriver driver;
     private LoginPage loginPage;
     private DashboardPage dashboardPage;
 
     @BeforeEach
-    void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--guest");
-        options.setAcceptInsecureCerts(true);
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
-
-        dashboardPage = new DashboardPage(driver);
+    void setUpLoginPage() {
         loginPage = new LoginPage(driver);
+        dashboardPage = new DashboardPage(driver);
 
         loginPage.open(BASE_URL);
     }
 
     @Test
+    @Tag("smoke")
+    @Tag("tc01")
     public void verifyValidLogin() {
         loginPage.login(USERNAME, PASSWORD, EMAIL);
 
@@ -50,6 +41,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc02")
     public void verifyEmptyLoginFields() {
         loginPage.login("", "", "");
 
@@ -67,6 +60,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc03")
     public void verifyInvalidEmailFormat() {
         String invalidEmail = "invalid-email";
 
@@ -86,6 +81,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc04")
     public void verifyEmptyUsername() {
         loginPage.login("", PASSWORD, EMAIL);
 
@@ -103,6 +100,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc05")
     public void verifyInvalidUsername() {
         String invalidUsername = "invalid-username";
 
@@ -115,6 +114,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc06")
     public void verifyEmptyPassword() {
         loginPage.login(USERNAME, "", EMAIL);
 
@@ -132,6 +133,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc07")
     public void verifyInvalidPassword() {
         String invalidPassword = "invalid-password";
 
@@ -144,45 +147,30 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc08")
     public void verifyPasswordVisibilityToggle() {
         loginPage.fillLoginForm(USERNAME, "test123", EMAIL);
 
-        WebElement password =
-                driver.findElement(LoginPage.PASSWORD);
+        WebElement password = driver.findElement(LoginPage.PASSWORD);
 
-        assertEquals(
-                "password",
-                password.getDomProperty("type")
-        );
-        assertEquals(
-                "test123",
-                password.getDomProperty("value")
-        );
+        assertEquals("password", password.getDomProperty("type"));
+        assertEquals("test123", password.getDomProperty("value"));
 
         driver.findElement(LoginPage.PASSWORD_VISIBILITY_BUTTON).click();
 
-        assertEquals(
-                "text",
-                password.getDomProperty("type")
-        );
-        assertEquals(
-                "test123",
-                password.getDomProperty("value")
-        );
+        assertEquals("text", password.getDomProperty("type"));
+        assertEquals("test123", password.getDomProperty("value"));
 
         driver.findElement(LoginPage.PASSWORD_VISIBILITY_BUTTON).click();
 
-        assertEquals(
-                "password",
-                password.getDomProperty("type")
-        );
-        assertEquals(
-                "test123",
-                password.getDomProperty("value")
-        );
+        assertEquals("password", password.getDomProperty("type"));
+        assertEquals("test123", password.getDomProperty("value"));
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc09")
     public void verifyEmptyEmail() {
         loginPage.login(USERNAME, PASSWORD, "");
 
@@ -195,6 +183,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc10")
     public void verifyEmailWithoutDomain() {
         String emailWithoutDomain = "test@";
 
@@ -213,6 +203,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc11")
     public void verifyEmailWithoutLocalPart() {
         String emailWithoutLocalPart = "@test.com";
 
@@ -231,6 +223,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc12")
     public void verifyEmailWithoutDomainSuffix() {
         String emailWithoutDomainSuffix = "test@test";
 
@@ -245,6 +239,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("regression")
+    @Tag("tc13")
     public void verifyFieldsAreClearedAfterRefresh() {
         loginPage.fillLoginForm(USERNAME, PASSWORD, EMAIL);
 
@@ -272,6 +268,8 @@ public class LoginTests extends BaseTest {
     }
 
     @Test
+    @Tag("smoke")
+    @Tag("tc14")
     public void verifyLogoutReturnsToLoginPage() {
         loginPage.login(USERNAME, PASSWORD, EMAIL);
 
@@ -294,10 +292,5 @@ public class LoginTests extends BaseTest {
         assertTrue(
                 driver.findElement(LoginPage.ERROR_MESSAGE).isDisplayed()
         );
-    }
-
-    @AfterEach
-    void tearDown() {
-        driver.quit();
     }
 }
